@@ -3,6 +3,7 @@ import com.github.abdullahbeg.engine3d.mesh.Triangle;
 import com.github.abdullahbeg.engine3d.mesh.Vertex;
 
 import java.util.ArrayList;
+import java.awt.Color;
 
 public class Cube {
 
@@ -19,14 +20,16 @@ public class Cube {
                 (
                         new Vertex(-1, -1, -1),
                         new Vertex(-1, 1, -1),
-                        new Vertex(1, 1, -1)
+                        new Vertex(1, 1, -1),
+                        Color.RED
                 ));
 
         tris.add(new Triangle
                 (
                         new Vertex(-1, -1, -1),
                         new Vertex(1, 1, -1),
-                        new Vertex(1, -1, -1)
+                        new Vertex(1, -1, -1),
+                        Color.RED
                 ));
 
 
@@ -36,14 +39,16 @@ public class Cube {
                 (
                         new Vertex(1, -1, -1),
                         new Vertex(1, 1, -1),
-                        new Vertex(1, 1, 1)
+                        new Vertex(1, 1, 1),
+                        Color.GREEN
                 ));
 
         tris.add(new Triangle
                 (
                         new Vertex(1, -1, -1),
                         new Vertex(1, 1, 1),
-                        new Vertex(1, -1, 1)
+                        new Vertex(1, -1, 1),
+                        Color.GREEN
                 ));
 
 
@@ -53,14 +58,16 @@ public class Cube {
                 (
                         new Vertex(1, -1, 1),
                         new Vertex(1, 1, 1),
-                        new Vertex(-1, 1, 1)
+                        new Vertex(-1, 1, 1),
+                        Color.BLUE
                 ));
 
         tris.add(new Triangle
                 (
                         new Vertex(1, -1, 1),
                         new Vertex(-1, 1, 1),
-                        new Vertex(-1, -1, 1)
+                        new Vertex(-1, -1, 1),
+                        Color.BLUE
                 ));
 
 
@@ -70,14 +77,16 @@ public class Cube {
                 (
                         new Vertex(-1, -1, 1),
                         new Vertex(-1, 1, 1),
-                        new Vertex(-1, 1, -1)
+                        new Vertex(-1, 1, -1),
+                        Color.WHITE
                 ));
 
         tris.add(new Triangle
                 (
                         new Vertex(-1, -1, 1),
                         new Vertex(-1, 1, -1),
-                        new Vertex(-1, -1, -1)
+                        new Vertex(-1, -1, -1),
+                        Color.WHITE
                 ));
 
 
@@ -87,14 +96,16 @@ public class Cube {
                 (
                         new Vertex(-1, 1, -1),
                         new Vertex(-1, 1, 1),
-                        new Vertex(1, 1, 1)
+                        new Vertex(1, 1, 1),
+                        Color.MAGENTA
                 ));
 
         tris.add(new Triangle
                 (
                         new Vertex(-1, 1, -1),
                         new Vertex(1, 1, 1),
-                        new Vertex(1, 1, -1)
+                        new Vertex(1, 1, -1),
+                        Color.MAGENTA
                 ));
 
 
@@ -103,14 +114,16 @@ public class Cube {
                 (
                         new Vertex(-1, -1, 1),
                         new Vertex(-1, -1, -1),
-                        new Vertex(1, -1, -1)
+                        new Vertex(1, -1, -1),
+                        Color.CYAN
                 ));
 
         tris.add(new Triangle
                 (
                         new Vertex(-1, -1, 1),
                         new Vertex(1, -1, -1),
-                        new Vertex(1, -1, 1)
+                        new Vertex(1, -1, 1),
+                        Color.CYAN
                 ));
 
     }

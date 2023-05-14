@@ -44,8 +44,8 @@ public class Renderer {
 
         path.closePath();
         
-        g2.setColor(Color.WHITE);
-        g2.draw(path);
+        g2.setColor(t.getColor());
+        g2.fill(path);
 
     }
 
@@ -81,7 +81,25 @@ public class Renderer {
                 
                 transformed = TriangleTransform.scale(scale, transformed);
                 transformed = TriangleTransform.translate(new Vertex(WIDTH / 2, HEIGHT / 2, 0), transformed);
-                output.add(transformed);
+
+                double light = Vector.scalarProduct(normal, direction);
+                light = Math.pow(Math.abs(light), 1/2.4);
+
+                int r = (int)(transformed.getColor().getRed() * light);
+                int g = (int)(transformed.getColor().getGreen() * light);
+                int b = (int)(transformed.getColor().getBlue() * light);
+
+                Color c = new Color(r,g,b);
+
+                output.add(
+                    new Triangle(
+                        transformed.getV1(),
+                        transformed.getV2(),
+                        transformed.getV3(),
+                        c
+                    )
+
+                );
             
             }
 

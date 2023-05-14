@@ -4,8 +4,8 @@
 
 todo:
 - ~~Projection Matrix~~
-- Backface Culling
-- Lighting
+- ~~Backface Culling~~
+- ~~Lighting~~
 - Camera
 - Triangle Clipping
 - Texture Mapping

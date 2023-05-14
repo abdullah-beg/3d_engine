@@ -15,7 +15,7 @@ public class TriangleTransform {
         Vertex v2 = Vector.rotateYaw(yaw, t.getV2()); 
         Vertex v3 = Vector.rotateYaw(yaw, t.getV3()); 
         
-        return new Triangle(v1, v2, v3);
+        return new Triangle(v1, v2, v3, t.getColor());
 
     }
 
@@ -25,7 +25,7 @@ public class TriangleTransform {
         Vertex v2 = Vector.rotatePitch(pitch, t.getV2()); 
         Vertex v3 = Vector.rotatePitch(pitch, t.getV3()); 
         
-        return new Triangle(v1, v2, v3);
+        return new Triangle(v1, v2, v3, t.getColor());
 
     }
 
@@ -35,7 +35,7 @@ public class TriangleTransform {
         Vertex v2 = Vector.rotateRoll(roll, t.getV2()); 
         Vertex v3 = Vector.rotateRoll(roll, t.getV3()); 
         
-        return new Triangle(v1, v2, v3);
+        return new Triangle(v1, v2, v3, t.getColor());
 
     }
 
@@ -45,7 +45,7 @@ public class TriangleTransform {
         Vertex v2 = matrix.applyProjectionMatrix(t.getV2());
         Vertex v3 = matrix.applyProjectionMatrix(t.getV3());
 
-        return new Triangle(v1, v2, v3);
+        return new Triangle(v1, v2, v3, t.getColor());
 
     }
 
@@ -55,7 +55,7 @@ public class TriangleTransform {
         Vertex v2 = Vector.mult(t.getV2(), scale);
         Vertex v3 = Vector.mult(t.getV3(), scale);
 
-        return new Triangle(v1, v2, v3);
+        return new Triangle(v1, v2, v3, t.getColor());
 
     }
 
@@ -65,7 +65,7 @@ public class TriangleTransform {
         Vertex v2 = Vector.add(t.getV2(), offset);
         Vertex v3 = Vector.add(t.getV3(), offset);
 
-        return new Triangle(v1, v2, v3);
+        return new Triangle(v1, v2, v3, t.getColor());
 
     }
     
