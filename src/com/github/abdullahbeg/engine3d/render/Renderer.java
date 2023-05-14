@@ -1,4 +1,4 @@
-package com.github.abdullahbeg.engine3d.renderer;
+package com.github.abdullahbeg.engine3d.render;
 
 import com.github.abdullahbeg.engine3d.math.Matrix;
 import com.github.abdullahbeg.engine3d.mesh.Triangle;

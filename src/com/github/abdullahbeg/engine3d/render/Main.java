@@ -1,4 +1,4 @@
-package com.github.abdullahbeg.engine3d.renderer;
+package com.github.abdullahbeg.engine3d.render;
 
 import javax.swing.JFrame;
 import java.io.IOException;
