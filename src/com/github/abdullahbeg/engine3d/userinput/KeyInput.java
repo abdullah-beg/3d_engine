@@ -18,7 +18,7 @@ public class KeyInput implements KeyListener {
         keys.put(KeyEvent.VK_D, false);
         keys.put(KeyEvent.VK_SPACE, false);
         keys.put(KeyEvent.VK_SHIFT, false);
-        keys.put(KeyEvent.VK_F, false);
+        keys.put(KeyEvent.VK_F, true);
     
     }
 
@@ -27,18 +27,26 @@ public class KeyInput implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+
         int key = e.getKeyCode();
+
         if (keys.containsKey(key)) {
-            keys.put(key, true);
+            if (key == KeyEvent.VK_F) { keys.put(key, !keys.get(key)); }
+            else { keys.put(key, true); }
         }
+
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+
         int key = e.getKeyCode();
+
         if (keys.containsKey(key)) {
-            keys.put(key, false);
+            if (key == KeyEvent.VK_F) {}
+            else { keys.put(key, false); }
         }
+
     }
 
     public boolean isKeyPressed(int keyCode) {

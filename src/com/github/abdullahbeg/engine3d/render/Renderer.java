@@ -2,6 +2,7 @@ package com.github.abdullahbeg.engine3d.render;
 
 import com.github.abdullahbeg.engine3d.math.Matrix;
 import com.github.abdullahbeg.engine3d.math.Vector;
+import com.github.abdullahbeg.engine3d.math.Camera;
 import com.github.abdullahbeg.engine3d.mesh.Triangle;
 import com.github.abdullahbeg.engine3d.mesh.Vertex;
 
@@ -49,10 +50,10 @@ public class Renderer {
 
     }
 
-    public void renderTriangles(float yaw, float pitch, float roll, float scale, ArrayList<Triangle> tris, Graphics2D g2) {
+    public void renderTriangles(float yaw, float pitch, float roll, float scale, Camera camera, ArrayList<Triangle> tris, Graphics2D g2) {
 
         ArrayList<Triangle> draw = new ArrayList<>();
-        transformTriangles(tris, draw, yaw, pitch, roll, scale);
+        transformTriangles(tris, draw, yaw, pitch, roll, scale, camera);
 
         for (Triangle t : draw) {
 
@@ -62,28 +63,29 @@ public class Renderer {
 
     }
 
-    public void transformTriangles(ArrayList<Triangle> input, ArrayList<Triangle> output, float yaw, float pitch, float roll, float scale) {
+    public void transformTriangles(ArrayList<Triangle> input, ArrayList<Triangle> output, float yaw, float pitch, float roll, float scale, Camera camera) {
 
         for (Triangle t : input) {
 
             Triangle transformed = t;
 
+            transformed = TriangleTransform.translate(camera.getCameraOffset(), transformed);
             transformed = TriangleTransform.rotateYaw(yaw, transformed);
             transformed = TriangleTransform.rotatePitch(pitch, transformed);
             transformed = TriangleTransform.rotateRoll(roll, transformed);
             transformed = TriangleTransform.applyProjectionMatrix(transformed, matrix);
-
+            
             Vertex line1 = Vector.sub(transformed.getV2(), transformed.getV1());
             Vertex line2 = Vector.sub(transformed.getV3(), transformed.getV1());
             Vertex normal = Vector.normalise(Vector.crossProduct(line1, line2));
-
+            
             if (Vector.scalarProduct(normal, direction) > 0) {
                 
                 transformed = TriangleTransform.scale(scale, transformed);
                 transformed = TriangleTransform.translate(new Vertex(WIDTH / 2, HEIGHT / 2, 0), transformed);
 
                 double light = Vector.scalarProduct(normal, direction);
-                light = Math.pow(Math.abs(light), 1/2.4);
+                light = Math.pow(Math.abs(light), 2.0);
 
                 int r = (int)(transformed.getColor().getRed() * light);
                 int g = (int)(transformed.getColor().getGreen() * light);

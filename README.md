@@ -6,7 +6,7 @@ todo:
 - ~~Projection Matrix~~
 - ~~Backface Culling~~
 - ~~Lighting~~
-- Camera
+- ~~Camera~~
 - Triangle Clipping
 - Texture Mapping
 - Perspective Correction

@@ -34,6 +34,8 @@ public class Main {
 
         Main main = new Main();
 
+        System.out.println("Controls: \nW - Move Forward\nA - Move Left\nS - Move Back\nD - Move Right\nSPACEBAR - Move Up\nSHIFT - Move Down\nF - Toggle Look Mode");
+
     }
 
 
