@@ -61,6 +61,25 @@ public class Vector {
 
     }
 
+    public static float scalarProduct(Vertex v1, Vertex v2) {
+
+        return (v1.getX() * v2.getX() + v1.getY() * v2.getY() + v1.getZ() * v2.getZ());
+
+    }
+
+    public static float length(Vertex v) {
+
+        return (float)Math.sqrt(scalarProduct(v, v));
+
+    }
+
+    public static Vertex normalise(Vertex v) {
+
+        float length = length(v);
+        return div(v, length);
+
+    }
+
     private static Vertex multiplyMatrixVector(float[][] matrix, Vertex v) {
 
         float[] vector = new float[] {v.getX(), v.getY(), v.getZ()};

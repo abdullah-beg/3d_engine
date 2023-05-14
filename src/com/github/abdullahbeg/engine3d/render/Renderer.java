@@ -1,6 +1,7 @@
 package com.github.abdullahbeg.engine3d.render;
 
 import com.github.abdullahbeg.engine3d.math.Matrix;
+import com.github.abdullahbeg.engine3d.math.Vector;
 import com.github.abdullahbeg.engine3d.mesh.Triangle;
 import com.github.abdullahbeg.engine3d.mesh.Vertex;
 
@@ -19,6 +20,8 @@ public class Renderer {
     private static final float FAR = 1000;
     private final float WIDTH;
     private final float HEIGHT;
+
+    private static final Vertex direction = new Vertex(0, 0, -1);
 
     public Renderer(int width, int height) {
 
@@ -48,7 +51,20 @@ public class Renderer {
 
     public void renderTriangles(float yaw, float pitch, float roll, float scale, ArrayList<Triangle> tris, Graphics2D g2) {
 
-        for (Triangle t : tris) {
+        ArrayList<Triangle> draw = new ArrayList<>();
+        transformTriangles(tris, draw, yaw, pitch, roll, scale);
+
+        for (Triangle t : draw) {
+
+            drawTriangle(g2, t);
+
+        }
+
+    }
+
+    public void transformTriangles(ArrayList<Triangle> input, ArrayList<Triangle> output, float yaw, float pitch, float roll, float scale) {
+
+        for (Triangle t : input) {
 
             Triangle transformed = t;
 
@@ -56,13 +72,21 @@ public class Renderer {
             transformed = TriangleTransform.rotatePitch(pitch, transformed);
             transformed = TriangleTransform.rotateRoll(roll, transformed);
             transformed = TriangleTransform.applyProjectionMatrix(transformed, matrix);
-            transformed = TriangleTransform.scale(scale, transformed);
-            transformed = TriangleTransform.translate(new Vertex(WIDTH / 2, HEIGHT / 2, 0), transformed);
 
-            drawTriangle(g2, transformed);
+            Vertex line1 = Vector.sub(transformed.getV2(), transformed.getV1());
+            Vertex line2 = Vector.sub(transformed.getV3(), transformed.getV1());
+            Vertex normal = Vector.normalise(Vector.crossProduct(line1, line2));
+
+            if (Vector.scalarProduct(normal, direction) > 0) {
+                
+                transformed = TriangleTransform.scale(scale, transformed);
+                transformed = TriangleTransform.translate(new Vertex(WIDTH / 2, HEIGHT / 2, 0), transformed);
+                output.add(transformed);
+            
+            }
 
         }
-
+        
     }
 
 }
