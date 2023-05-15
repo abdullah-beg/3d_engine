@@ -6,7 +6,6 @@ public class Camera {
     
     private Vertex cameraOffset;
     
-    
     public Camera() {
         
         cameraOffset = new Vertex(0, 0, -1);

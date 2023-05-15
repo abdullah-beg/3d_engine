@@ -59,7 +59,7 @@ public class Matrix {
 
         }
 
-        return new Vertex(output[0], output[1], output[2], output[3]);
+        return new Vertex(output[0], output[1], output[2], output[3], v.getU(), v.getV());
 
     }
 
@@ -70,11 +70,11 @@ public class Matrix {
         if (transformed.getW() != 0) {
             float w = transformed.getW();
 
-            return new Vertex(transformed.getX() / w, transformed.getY() / w, transformed.getZ() / w, 1 / w);
+            return new Vertex(transformed.getX() / w, transformed.getY() / w, transformed.getZ() / w, 1 / w, v.getU(), v.getV());
 
         }
 
-        return new Vertex(transformed.getX(), transformed.getY(), transformed.getZ(), 1);
+        return new Vertex(transformed.getX(), transformed.getY(), transformed.getZ(), 1, v.getU(), v.getV());
 
     }
 

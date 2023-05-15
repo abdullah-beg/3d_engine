@@ -7,12 +7,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 
 import com.github.abdullahbeg.engine3d.mesh.Triangle;
-import com.github.abdullahbeg.engine3d.objects.Cube;
 import com.github.abdullahbeg.engine3d.userinput.InputHandler;
 import com.github.abdullahbeg.engine3d.math.Camera;
 import com.github.abdullahbeg.engine3d.misc.Location;
+import com.github.abdullahbeg.engine3d.object.Square;
 
 public class Engine extends JPanel implements Runnable {
     
@@ -51,7 +52,7 @@ public class Engine extends JPanel implements Runnable {
     private final Renderer renderer;
     private final InputHandler inputHandler;
     private final Camera camera;
-
+    private BufferedImage window;
 
     private ArrayList<Triangle> triangles;
     
@@ -73,8 +74,8 @@ public class Engine extends JPanel implements Runnable {
         addMouseWheelListener(inputHandler.getMouseWheelInput());
 
         triangles = new ArrayList<>();
-        Cube c = new Cube(triangles); 
-        
+        Square c = new Square(triangles); 
+    
         engineThread.start();
 
     }
@@ -126,9 +127,12 @@ public class Engine extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        window = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+
         Graphics2D g2 = (Graphics2D) g;
 
-        renderer.renderTriangles(yaw, pitch, roll, scale, camera, triangles, g2);
+        renderer.renderTriangles(yaw, pitch, roll, scale, camera, triangles, g2, window);
+        g2.drawImage(window, null, 0, 0);
         
     }
 

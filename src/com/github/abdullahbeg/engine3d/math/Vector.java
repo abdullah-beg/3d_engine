@@ -12,7 +12,9 @@ public class Vector {
             v1.getX() + v2.getX(),
             v1.getY() + v2.getY(),
             v1.getZ() + v2.getZ(),
-            v1.getW()
+            v1.getW(),
+            v1.getU(),
+            v1.getV()
         );
 
     }
@@ -23,7 +25,9 @@ public class Vector {
             v1.getX() - v2.getX(),
             v1.getY() - v2.getY(),
             v1.getZ() - v2.getZ(),
-            v1.getW()
+            v1.getW(),
+            v1.getU(),
+            v1.getV()
         );
         
     }
@@ -34,7 +38,9 @@ public class Vector {
             v.getX() * value,
             v.getY() * value,
             v.getZ() * value,
-            v.getW()
+            v.getW(),
+            v.getU(),
+            v.getV()
         );
         
     }
@@ -45,7 +51,9 @@ public class Vector {
             v.getX() / value,
             v.getY() / value,
             v.getZ() / value,
-            v.getW()
+            v.getW(),
+            v.getU(),
+            v.getV()
         );
         
     }
@@ -56,7 +64,9 @@ public class Vector {
             v1.getY() * v2.getZ() - v1.getZ() * v2.getY(),
             v1.getZ() * v2.getX() - v1.getX() * v2.getZ(),
             v1.getX() * v2.getY() - v1.getY() * v2.getX(),
-            v1.getW()
+            v1.getW(),
+            v1.getU(),
+            v1.getV()
         );
 
     }
@@ -94,7 +104,7 @@ public class Vector {
 
         }
 
-        return new Vertex(output[0], output[1], output[2], v.getW());
+        return new Vertex(output[0], output[1], output[2], v.getW(), v.getU(), v.getV());
 
     }
 

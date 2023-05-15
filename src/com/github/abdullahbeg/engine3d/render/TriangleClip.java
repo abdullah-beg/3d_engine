@@ -36,8 +36,8 @@ public class TriangleClip {
                     int i3 = (i + 2) % 3;
                     Vertex[] intersects = zIntersect(vertices[i], vertices[i2], vertices[i3], zBound);
 
-                    output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getColor()));
-                    output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getColor()));
+                    output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture()));
+                    output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture()));
                     
                     return output;
 
@@ -56,7 +56,7 @@ public class TriangleClip {
                     int i3 = (i + 2) % 3;
                     Vertex[] intersects = zIntersect(vertices[i], vertices[i2], vertices[i3], zBound);
 
-                    output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getColor()));
+                    output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture()));
 
                     return output;
 
@@ -124,8 +124,8 @@ public class TriangleClip {
                         int i3 = (i + 2) % 3;
                         Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
                     
-                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getColor()));
-                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getColor()));
+                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture()));
+                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture()));
 
                         break;
     
@@ -143,7 +143,7 @@ public class TriangleClip {
                         int i3 = (i + 2) % 3;
                         Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
 
-                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getColor()));
+                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture()));
                         
                         break;
 
@@ -187,8 +187,8 @@ public class TriangleClip {
                         int i3 = (i + 2) % 3;
                         Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
                     
-                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getColor()));
-                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getColor()));
+                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture()));
+                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture()));
 
                         break;
     
@@ -206,7 +206,7 @@ public class TriangleClip {
                         int i3 = (i + 2) % 3;
                         Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
 
-                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getColor()));
+                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture()));
                         
                         break;
 
@@ -250,8 +250,8 @@ public class TriangleClip {
                         int i3 = (i + 2) % 3;
                         Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
                     
-                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getColor()));
-                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getColor()));
+                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture()));
+                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture()));
                         
                         break;
 
@@ -269,7 +269,7 @@ public class TriangleClip {
                         int i3 = (i + 2) % 3;
                         Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
 
-                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getColor()));
+                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture()));
                         
                         break;
 
@@ -313,8 +313,8 @@ public class TriangleClip {
                         int i3 = (i + 2) % 3;
                         Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
                     
-                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getColor()));
-                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getColor()));
+                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture()));
+                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture()));
                         
                         break;
 
@@ -332,7 +332,7 @@ public class TriangleClip {
                         int i3 = (i + 2) % 3;
                         Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
 
-                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getColor()));
+                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture()));
                         
                         break;
 
@@ -353,25 +353,39 @@ public class TriangleClip {
         float dx = v1.getX() - v2.getX();
         float dy = v1.getY() - v2.getY();
         float dz = v1.getZ() - v2.getZ();
+        float dw = v1.getW() - v2.getW();
+
+        float du = v1.getU() - v2.getU();
+        float dv = v1.getV() - v2.getV();
 
         float deltaX = (xIntersect - v2.getX());
 
         Vertex intersect1 = new Vertex(
             xIntersect,
             (dy/dx) * deltaX + v2.getY(),
-            (dz/dx) * deltaX + v2.getZ()
+            (dz/dx) * deltaX + v2.getZ(),
+            (dw/dx) * deltaX + v2.getW(),
+            (du/dx) * deltaX + v2.getU(),
+            (dv/dx) * deltaX + v2.getV()
         );
 
         dx = v1.getX() - v3.getX();
         dy = v1.getY() - v3.getY();
         dz = v1.getZ() - v3.getZ();
+        dw = v1.getW() - v3.getW();
+
+        du = v1.getU() - v3.getU();
+        dv = v1.getV() - v3.getV();
 
         deltaX = (xIntersect - v3.getX());
 
         Vertex intersect2 = new Vertex(
             xIntersect,
             (dy/dx) * deltaX + v3.getY(),
-            (dz/dx) * deltaX + v3.getZ()
+            (dz/dx) * deltaX + v3.getZ(),
+            (dw/dx) * deltaX + v3.getW(),
+            (du/dx) * deltaX + v3.getU(),
+            (dv/dx) * deltaX + v3.getV()
         );
 
         return new Vertex[] {intersect1, intersect2}; 
@@ -383,25 +397,39 @@ public class TriangleClip {
         float dx = v1.getX() - v2.getX();
         float dy = v1.getY() - v2.getY();
         float dz = v1.getZ() - v2.getZ();
+        float dw = v1.getW() - v2.getW();
 
-        float deltaX = (yIntersect - v2.getY());
+        float du = v1.getU() - v2.getU();
+        float dv = v1.getV() - v2.getV();
+
+        float deltaY = (yIntersect - v2.getY());
 
         Vertex intersect1 = new Vertex(
-            (dx/dy) * deltaX + v2.getX(),
+            (dx/dy) * deltaY + v2.getX(),
             yIntersect,
-            (dz/dy) * deltaX + v2.getZ()
+            (dz/dy) * deltaY + v2.getZ(),
+            (dw/dy) * deltaY + v2.getW(),
+            (du/dy) * deltaY + v2.getU(),
+            (dv/dy) * deltaY + v2.getV()
         );
 
         dx = v1.getX() - v3.getX();
         dy = v1.getY() - v3.getY();
         dz = v1.getZ() - v3.getZ();
+        dw = v1.getW() - v3.getW();
+        
+        du = v1.getU() - v3.getU();
+        dv = v1.getV() - v3.getV();
 
-        deltaX = (yIntersect - v3.getY());
+        deltaY = (yIntersect - v3.getY());
 
         Vertex intersect2 = new Vertex(
-            (dx/dy) * deltaX + v3.getX(),
+            (dx/dy) * deltaY + v3.getX(),
             yIntersect,
-            (dz/dx) * deltaX + v3.getZ()
+            (dz/dy) * deltaY + v3.getZ(),
+            (dw/dy) * deltaY + v3.getW(),
+            (du/dy) * deltaY + v3.getU(),
+            (dv/dy) * deltaY + v3.getV()
         );
 
         return new Vertex[] {intersect1, intersect2}; 
@@ -415,13 +443,18 @@ public class TriangleClip {
         float dz = v1.getZ() - v2.getZ();
         float dw = v1.getW() - v2.getW();
 
+        float du = v1.getU() - v2.getU();
+        float dv = v1.getV() - v2.getV();
+
         float deltaZ = (zIntersect - v2.getZ());
 
         Vertex intersect1 = new Vertex(
             (dx/dz) * deltaZ + v2.getX(),
             (dy/dz) * deltaZ + v2.getY(),
             zIntersect,
-            (dw/dz) * deltaZ + v2.getW()
+            (dw/dz) * deltaZ + v2.getW(),
+            (du/dz) * deltaZ + v2.getU(),
+            (dv/dz) * deltaZ + v2.getV()
         );
 
         dx = v1.getX() - v3.getX();
@@ -429,13 +462,18 @@ public class TriangleClip {
         dz = v1.getZ() - v3.getZ();
         dw = v1.getW() - v3.getW();
 
+        du = v1.getU() - v3.getU();
+        dv = v1.getV() - v3.getV();
+
         deltaZ = (zIntersect - v3.getZ());
 
         Vertex intersect2 = new Vertex(
-            (dx/dz) * (deltaZ) + v3.getX(),
-            (dy/dz) * (deltaZ) + v3.getY(),
+            (dx/dz) * deltaZ + v3.getX(),
+            (dy/dz) * deltaZ + v3.getY(),
             zIntersect,
-            (dw/dz) * deltaZ + v3.getW()
+            (dw/dz) * deltaZ + v3.getW(),
+            (du/dz) * deltaZ + v3.getU(),
+            (dv/dz) * deltaZ + v3.getV()
         );
 
         return new Vertex[] {intersect1, intersect2};

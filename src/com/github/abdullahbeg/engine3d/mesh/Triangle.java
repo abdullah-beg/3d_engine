@@ -1,19 +1,20 @@
 package com.github.abdullahbeg.engine3d.mesh;
 
-import java.awt.Color;
+import com.github.abdullahbeg.engine3d.texture.Texture;
 
 public class Triangle {
     
     private Vertex v1, v2, v3;
-    private Color color;
+    
+    private Texture texture;
 
-    public Triangle(Vertex v1, Vertex v2, Vertex v3, Color color) {
+    public Triangle(Vertex v1, Vertex v2, Vertex v3, Texture texture) {
 
         this.v1 = v1;
         this.v2 = v2;
         this.v3 = v3;
 
-        this.color = color;
+        this.texture = texture;
 
     }
 
@@ -21,7 +22,7 @@ public class Triangle {
     public Vertex getV2() { return v2; }
     public Vertex getV3() { return v3; }
 
-    public Color getColor() { return color; }
+    public Texture getTexture() { return texture; }
 
     public Vertex[] getVertices() { return new Vertex[] {v1, v2, v3}; }
 
