@@ -70,7 +70,7 @@ public class Matrix {
         if (transformed.getW() != 0) {
             float w = transformed.getW();
 
-            return new Vertex(transformed.getX() / w, transformed.getY() / w, transformed.getZ() / w, 1 / w, v.getU(), v.getV());
+            return new Vertex(transformed.getX() / w, transformed.getY() / w, transformed.getZ() / w, 1 / w, v.getU() / w, v.getV() / w);
 
         }
 

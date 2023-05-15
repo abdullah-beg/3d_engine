@@ -170,10 +170,11 @@ public class Renderer {
 
                 double uStart = vertices[0].getU() + ((double)y - p0y) / (p1y - p0y) * (vertices[1].getU() - vertices[0].getU());
                 double vStart = vertices[0].getV() + ((double)y - p0y) / (p1y - p0y) * (vertices[1].getV() - vertices[0].getV());
+                double wStart = vertices[0].getW() + ((double)y - p0y) / (p1y - p0y) * (vertices[1].getW() - vertices[0].getW());
 
                 double uEnd = vertices[0].getU() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getU() - vertices[0].getU());
                 double vEnd = vertices[0].getV() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getV() - vertices[0].getV());
-
+                double wEnd = vertices[0].getW() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getW() - vertices[0].getW());
 
                 if (x1 > x2) {
                     int holder = x1;
@@ -181,6 +182,7 @@ public class Renderer {
                     x2 = holder;
 
                     double holder2;
+
                     holder2 = uStart;
                     uStart = uEnd;
                     uEnd = holder2;
@@ -189,19 +191,27 @@ public class Renderer {
                     vStart = vEnd;
                     vEnd = holder2;
 
+                    holder2 = wStart;
+                    wStart = wEnd;
+                    wEnd = holder2;
+
                 }
 
                 if (x2 > x1) {
                     double u = uStart * t.getTexture().getTextureWidth();
-                    double ustep = (uEnd - uStart) / (x2 - x1) * t.getTexture().getTextureWidth();
                     double v = vStart * t.getTexture().getTextureHeight();
+                    double w = wStart;
+
+                    double ustep = (uEnd - uStart) / (x2 - x1) * t.getTexture().getTextureWidth();
                     double vstep = (vEnd - vStart) / (x2 - x1) * t.getTexture().getTextureHeight();
+                    double wstep = (wEnd - wStart) / (x2 - x1);
 
                     for (int x = x1; x <= x2; x++) {
                         u += ustep;
                         v += vstep;
+                        w += wstep;
 
-                        image.setRGB(x, y, t.getTexture().getTexturePixel(u, v));
+                        image.setRGB(x, y, t.getTexture().getTexturePixel(u / w, v / w));
 
                     }
 
@@ -224,9 +234,11 @@ public class Renderer {
     
                 double uStart = vertices[1].getU() + ((double)y - p1y) / (p2y - p1y) * (vertices[2].getU() - vertices[1].getU());
                 double vStart = vertices[1].getV() + ((double)y - p1y) / (p2y - p1y) * (vertices[2].getV() - vertices[1].getV());
+                double wStart = vertices[1].getW() + ((double)y - p1y) / (p2y - p1y) * (vertices[2].getW() - vertices[1].getW());
 
                 double uEnd = vertices[0].getU() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getU() - vertices[0].getU());
                 double vEnd = vertices[0].getV() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getV() - vertices[0].getV());
+                double wEnd = vertices[0].getW() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getW() - vertices[0].getW());
 
                 if (x1 > x2) {
                     int holder = x1;
@@ -234,27 +246,36 @@ public class Renderer {
                     x2 = holder;
 
                     double holder2;
+
                     holder2 = uStart;
                     uStart = uEnd;
                     uEnd = holder2;
-
+                    
                     holder2 = vStart;
                     vStart = vEnd;
                     vEnd = holder2;
+
+                    holder2 = wStart;
+                    wStart = wEnd;
+                    wEnd = holder2;
 
                 }
 
                 if (x2 > x1) {
                     double u = uStart * t.getTexture().getTextureWidth();
-                    double ustep = (uEnd - uStart) / (x2 - x1) * t.getTexture().getTextureHeight();
                     double v = vStart * t.getTexture().getTextureWidth();
+                    double w = wStart;
+
+                    double ustep = (uEnd - uStart) / (x2 - x1) * t.getTexture().getTextureHeight();
                     double vstep = (vEnd - vStart) / (x2 - x1) * t.getTexture().getTextureHeight();
+                    double wstep = (wEnd - wStart) / (x2 - x1);
 
                     for (int x = x1; x <= x2; x++) {
                         u += ustep;
                         v += vstep;
+                        w += wstep;
 
-                        image.setRGB(x, y, t.getTexture().getTexturePixel(u, v));
+                        image.setRGB(x, y, t.getTexture().getTexturePixel(u / w, v / w));
 
                     }
 

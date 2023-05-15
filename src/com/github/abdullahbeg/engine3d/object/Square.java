@@ -20,6 +20,22 @@ public class Square {
 
         tris.add(new Triangle
                 (
+                        new Vertex(1, -1, -1, 1,1),
+                        new Vertex(1, 1, -1, 1,0),
+                        new Vertex(3, 1, -1, 0,0),
+                        logo
+                ));
+
+        tris.add(new Triangle
+                (
+                        new Vertex(1, -1, -1, 1,1),
+                        new Vertex(3, 1, -1, 0,0),
+                        new Vertex(3, -1, -1, 0,1),
+                        logo
+                ));
+
+        tris.add(new Triangle
+                (
                         new Vertex(-1, -1, -1, 1,1),
                         new Vertex(-1, 1, -1, 1,0),
                         new Vertex(1, 1, -1, 0,0),
@@ -31,6 +47,22 @@ public class Square {
                         new Vertex(-1, -1, -1, 1,1),
                         new Vertex(1, 1, -1, 0,0),
                         new Vertex(1, -1, -1, 0,1),
+                        logo
+                ));
+        
+        tris.add(new Triangle
+                (
+                        new Vertex(-3, -1, -1, 1,1),
+                        new Vertex(-3, 1, -1, 1,0),
+                        new Vertex(-1, 1, -1, 0,0),
+                        logo
+                ));
+
+        tris.add(new Triangle
+                (
+                        new Vertex(-3, -1, -1, 1,1),
+                        new Vertex(-1, 1, -1, 0,0),
+                        new Vertex(-1, -1, -1, 0,1),
                         logo
                 ));
 
