@@ -6,11 +6,9 @@ import com.github.abdullahbeg.engine3d.math.Camera;
 import com.github.abdullahbeg.engine3d.mesh.Triangle;
 import com.github.abdullahbeg.engine3d.mesh.Vertex;
 
-import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.awt.Graphics2D;
-import java.awt.Color;
 
 public class Renderer {
     
@@ -48,24 +46,7 @@ public class Renderer {
 
     }
 
-    private void drawTriangle(Graphics2D g2, Triangle t) {
-
-        Path2D path = new Path2D.Double();
-
-        path.moveTo(t.getV1().getX(), t.getV1().getY());
-        path.lineTo(t.getV2().getX(), t.getV2().getY());
-        path.lineTo(t.getV3().getX(), t.getV3().getY());
-
-        path.closePath();
-        
-        // g2.setColor(t.getColor());
-        g2.fill(path);
-        g2.setColor(Color.BLACK);
-        g2.draw(path);
-
-    }
-
-    public void renderTriangles(float yaw, float pitch, float roll, float scale, Camera camera, ArrayList<Triangle> tris, Graphics2D g2, BufferedImage window) {
+    public void renderTriangles(float yaw, float pitch, float roll, float scale, Camera camera, ArrayList<Triangle> tris, BufferedImage window) {
 
         ArrayList<Triangle> transformed = new ArrayList<>();
         
@@ -73,10 +54,19 @@ public class Renderer {
 
         ArrayList<Triangle> draw = TriangleClip.clipAll(UP, DOWN, LEFT, RIGHT, transformed);
 
+        float[][] depthBuffer = new float[HEIGHT][WIDTH];
+
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+
+                depthBuffer[y][x] = Float.NEGATIVE_INFINITY;
+
+            }
+        }
+
         for (Triangle t : draw) {
 
-            // drawTriangle(g2, t);
-            rasterizeTriangle(window, t);
+            rasterizeTriangle(window, t, depthBuffer);
 
         }
 
@@ -126,7 +116,7 @@ public class Renderer {
         
     }
 
-    private void rasterizeTriangle(BufferedImage image, Triangle t) {
+    private void rasterizeTriangle(BufferedImage image, Triangle t, float[][] depthBuffer) {
 
         Vertex[] vertices = t.getVertices();
 
@@ -171,10 +161,12 @@ public class Renderer {
                 double uStart = vertices[0].getU() + ((double)y - p0y) / (p1y - p0y) * (vertices[1].getU() - vertices[0].getU());
                 double vStart = vertices[0].getV() + ((double)y - p0y) / (p1y - p0y) * (vertices[1].getV() - vertices[0].getV());
                 double wStart = vertices[0].getW() + ((double)y - p0y) / (p1y - p0y) * (vertices[1].getW() - vertices[0].getW());
+                double zStart = vertices[0].getZ() + ((double)y - p0y) / (p1y - p0y) * (vertices[1].getZ() - vertices[0].getZ());
 
                 double uEnd = vertices[0].getU() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getU() - vertices[0].getU());
                 double vEnd = vertices[0].getV() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getV() - vertices[0].getV());
                 double wEnd = vertices[0].getW() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getW() - vertices[0].getW());
+                double zEnd = vertices[0].getZ() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getZ() - vertices[0].getZ());
 
                 if (x1 > x2) {
                     int holder = x1;
@@ -195,23 +187,35 @@ public class Renderer {
                     wStart = wEnd;
                     wEnd = holder2;
 
+                    holder2 = zStart;
+                    zStart = zEnd;
+                    zEnd = holder2;
+
                 }
 
                 if (x2 > x1) {
                     double u = uStart * t.getTexture().getTextureWidth();
                     double v = vStart * t.getTexture().getTextureHeight();
                     double w = wStart;
+                    double z = zStart;
 
                     double ustep = (uEnd - uStart) / (x2 - x1) * t.getTexture().getTextureWidth();
                     double vstep = (vEnd - vStart) / (x2 - x1) * t.getTexture().getTextureHeight();
                     double wstep = (wEnd - wStart) / (x2 - x1);
+                    double zstep = (zEnd - zStart) / (x2 - x1);
 
                     for (int x = x1; x <= x2; x++) {
                         u += ustep;
                         v += vstep;
                         w += wstep;
+                        z += zstep;
 
-                        image.setRGB(x, y, t.getTexture().getTexturePixel(u / w, v / w));
+                        if (z > depthBuffer[y][x]) {
+                            
+                            image.setRGB(x, y, t.getTexture().getTexturePixel(u / w, v / w));
+                            depthBuffer[y][x] = (float)z;
+
+                        }
 
                     }
 
@@ -235,10 +239,12 @@ public class Renderer {
                 double uStart = vertices[1].getU() + ((double)y - p1y) / (p2y - p1y) * (vertices[2].getU() - vertices[1].getU());
                 double vStart = vertices[1].getV() + ((double)y - p1y) / (p2y - p1y) * (vertices[2].getV() - vertices[1].getV());
                 double wStart = vertices[1].getW() + ((double)y - p1y) / (p2y - p1y) * (vertices[2].getW() - vertices[1].getW());
+                double zStart = vertices[1].getZ() + ((double)y - p1y) / (p2y - p1y) * (vertices[2].getZ() - vertices[1].getZ());
 
                 double uEnd = vertices[0].getU() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getU() - vertices[0].getU());
                 double vEnd = vertices[0].getV() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getV() - vertices[0].getV());
                 double wEnd = vertices[0].getW() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getW() - vertices[0].getW());
+                double zEnd = vertices[0].getZ() + ((double)y - p0y) / (p2y - p0y) * (vertices[2].getZ() - vertices[0].getZ());
 
                 if (x1 > x2) {
                     int holder = x1;
@@ -259,23 +265,35 @@ public class Renderer {
                     wStart = wEnd;
                     wEnd = holder2;
 
+                    holder2 = zStart;
+                    zStart = zEnd;
+                    zEnd = holder2;
+
                 }
 
                 if (x2 > x1) {
                     double u = uStart * t.getTexture().getTextureWidth();
                     double v = vStart * t.getTexture().getTextureWidth();
                     double w = wStart;
+                    double z = zStart;
 
                     double ustep = (uEnd - uStart) / (x2 - x1) * t.getTexture().getTextureHeight();
                     double vstep = (vEnd - vStart) / (x2 - x1) * t.getTexture().getTextureHeight();
                     double wstep = (wEnd - wStart) / (x2 - x1);
+                    double zstep = (zEnd - zStart) / (x2 - x1);
 
                     for (int x = x1; x <= x2; x++) {
                         u += ustep;
                         v += vstep;
                         w += wstep;
+                        z += zstep;
 
-                        image.setRGB(x, y, t.getTexture().getTexturePixel(u / w, v / w));
+                        if (z > depthBuffer[y][x]) {
+
+                            image.setRGB(x, y, t.getTexture().getTexturePixel(u / w, v / w));
+                            depthBuffer[y][x] = (float)z;
+
+                        }
 
                     }
 

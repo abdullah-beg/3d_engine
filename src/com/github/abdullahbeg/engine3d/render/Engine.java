@@ -131,7 +131,7 @@ public class Engine extends JPanel implements Runnable {
 
         Graphics2D g2 = (Graphics2D) g;
 
-        renderer.renderTriangles(yaw, pitch, roll, scale, camera, triangles, g2, window);
+        renderer.renderTriangles(yaw, pitch, roll, scale, camera, triangles, window);
         g2.drawImage(window, null, 0, 0);
         
     }
@@ -145,7 +145,6 @@ public class Engine extends JPanel implements Runnable {
     public void setYaw(float yaw) { this.yaw = yaw; }
     public void setPitch(float pitch) { this.pitch = pitch; }
 
-    
     public void setRoll(float roll) { 
         
         if (roll < -45) { this.roll = -45; return; }

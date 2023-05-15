@@ -17,6 +17,22 @@ public class Square {
     public void addTriangles(ArrayList<Triangle> tris) {
 
         Texture logo = new Texture();
+        
+        tris.add(new Triangle
+                (
+                        new Vertex(-1, -1, -5, 1,1),
+                        new Vertex(-1, 1, -5, 1,0),
+                        new Vertex(1, 1, -5, 0,0),
+                        logo
+                ));
+        
+        tris.add(new Triangle
+                (
+                        new Vertex(-1, -1, -5, 1,1),
+                        new Vertex(1, 1, -5, 0,0),
+                        new Vertex(1, -1, -5, 0,1),
+                        logo
+                ));
 
         tris.add(new Triangle
                 (
@@ -65,6 +81,7 @@ public class Square {
                         new Vertex(-1, -1, -1, 0,1),
                         logo
                 ));
+
 
     }
     

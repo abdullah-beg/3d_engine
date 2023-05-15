@@ -9,7 +9,7 @@ todo:
 - ~~Camera~~
 - ~~Triangle Clipping~~
 - ~~Texture Mapping~~
-- Perspective Correction
+- ~~Perspective Correction~~
 - Depth Buffer
 
 Credit:
