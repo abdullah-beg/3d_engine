@@ -19,15 +19,27 @@ public class Renderer {
     private static final float FOV_Y = 90;
     private static final float NEAR = 0.1F;
     private static final float FAR = 1000;
-    private final float WIDTH;
-    private final float HEIGHT;
+    private final int WIDTH;
+    private final int HEIGHT;
+
+    // Boundaries
+    private final int UP, DOWN, LEFT, RIGHT;
+    private static final float Z_BOUND = 0.00001F;
 
     private static final Vertex direction = new Vertex(0, 0, -1);
+    private final Vertex offset;
 
     public Renderer(int width, int height) {
 
         WIDTH = width;
         HEIGHT = height;
+
+        UP = 0; 
+        DOWN = HEIGHT - 1; 
+        LEFT = 0; 
+        RIGHT = WIDTH - 1;
+
+        offset = new Vertex(WIDTH / 2, HEIGHT / 2, 0);
 
         float ASPECT = (float)height / width;
 
@@ -47,13 +59,18 @@ public class Renderer {
         
         g2.setColor(t.getColor());
         g2.fill(path);
+        g2.setColor(Color.BLACK);
+        g2.draw(path);
 
     }
 
     public void renderTriangles(float yaw, float pitch, float roll, float scale, Camera camera, ArrayList<Triangle> tris, Graphics2D g2) {
 
-        ArrayList<Triangle> draw = new ArrayList<>();
-        transformTriangles(tris, draw, yaw, pitch, roll, scale, camera);
+        ArrayList<Triangle> transformed = new ArrayList<>();
+        
+        transformTriangles(tris, transformed, yaw, pitch, roll, scale, camera);
+
+        ArrayList<Triangle> draw = TriangleClip.clipAll(UP, DOWN, LEFT, RIGHT, transformed);
 
         for (Triangle t : draw) {
 
@@ -73,38 +90,45 @@ public class Renderer {
             transformed = TriangleTransform.rotateYaw(yaw, transformed);
             transformed = TriangleTransform.rotatePitch(pitch, transformed);
             transformed = TriangleTransform.rotateRoll(roll, transformed);
-            transformed = TriangleTransform.applyProjectionMatrix(transformed, matrix);
-            
-            Vertex line1 = Vector.sub(transformed.getV2(), transformed.getV1());
-            Vertex line2 = Vector.sub(transformed.getV3(), transformed.getV1());
-            Vertex normal = Vector.normalise(Vector.crossProduct(line1, line2));
-            
-            if (Vector.scalarProduct(normal, direction) > 0) {
+
+            ArrayList<Triangle> zClipped = TriangleClip.clipZ(transformed, Z_BOUND);
+
+            for (Triangle zt : zClipped) {
+
+                transformed = TriangleTransform.applyProjectionMatrix(zt, matrix);
                 
-                transformed = TriangleTransform.scale(scale, transformed);
-                transformed = TriangleTransform.translate(new Vertex(WIDTH / 2, HEIGHT / 2, 0), transformed);
+                Vertex line1 = Vector.sub(transformed.getV2(), transformed.getV1());
+                Vertex line2 = Vector.sub(transformed.getV3(), transformed.getV1());
+                Vertex normal = Vector.normalise(Vector.crossProduct(line1, line2));
 
-                double light = Vector.scalarProduct(normal, direction);
-                light = Math.pow(Math.abs(light), 2.0);
+                if (Vector.scalarProduct(normal, direction) > 0) {
+                    
+                    transformed = TriangleTransform.scale(scale, transformed);
+                    transformed = TriangleTransform.translate(offset, transformed);
+    
+                    double light = Vector.scalarProduct(normal, direction);
+                    light = Math.pow(Math.abs(light), 1);
+    
+                    int r = (int)(transformed.getColor().getRed() * light);
+                    int g = (int)(transformed.getColor().getGreen() * light);
+                    int b = (int)(transformed.getColor().getBlue() * light);
+    
+                    Color c = new Color(r,g,b);
+    
+                    output.add(
+                        new Triangle(
+                            transformed.getV1(),
+                            transformed.getV2(),
+                            transformed.getV3(),
+                            c
+                        )
+    
+                    );
+                
+                }
 
-                int r = (int)(transformed.getColor().getRed() * light);
-                int g = (int)(transformed.getColor().getGreen() * light);
-                int b = (int)(transformed.getColor().getBlue() * light);
-
-                Color c = new Color(r,g,b);
-
-                output.add(
-                    new Triangle(
-                        transformed.getV1(),
-                        transformed.getV2(),
-                        transformed.getV3(),
-                        c
-                    )
-
-                );
-            
             }
-
+            
         }
         
     }

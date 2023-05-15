@@ -23,4 +23,6 @@ public class Triangle {
 
     public Color getColor() { return color; }
 
+    public Vertex[] getVertices() { return new Vertex[] {v1, v2, v3}; }
+
 }

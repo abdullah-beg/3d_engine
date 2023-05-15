@@ -16,18 +16,19 @@ import com.github.abdullahbeg.engine3d.misc.Location;
 
 public class Engine extends JPanel implements Runnable {
     
+    // User info for Mouse
     private static final double USER_SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     private static final double USER_SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
     private Location mouseLocation = new Location((float)USER_SCREEN_WIDTH / 2, (float)USER_SCREEN_HEIGHT / 2);
 
-
+    // Window Size
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
     private static final int FPS = 60;
     private static final double GAME_TICK_INTERVAL = (double)1000000000 / FPS;
 
-    private static final Color BACKGROUND_COLOR = Color.BLACK;
+    private static final Color BACKGROUND_COLOR = new Color(153,228,255);
     
 
     private float yaw = 0;
@@ -36,7 +37,7 @@ public class Engine extends JPanel implements Runnable {
     
     private float scale = 250;
     
-    
+
     private static final float SCROLL_SPEED = 5;
 
     private static final float LOOK_SENSITIVITY_X = 4;
@@ -53,7 +54,6 @@ public class Engine extends JPanel implements Runnable {
 
 
     private ArrayList<Triangle> triangles;
-
     
     public Engine(Main main) {
 

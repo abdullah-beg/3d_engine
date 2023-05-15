@@ -65,7 +65,6 @@ public class Matrix {
 
     public Vertex applyProjectionMatrix(Vertex v) {
 
-        v = Vector.add(v, new Vertex(0, 0, 3));
         Vertex transformed = multiplyMatrixVector4x4(projectionMatrix, v);
 
         if (transformed.getW() != 0) {
