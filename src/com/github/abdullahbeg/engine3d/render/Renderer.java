@@ -8,7 +8,7 @@ import com.github.abdullahbeg.engine3d.mesh.Vertex;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.awt.Graphics2D;
+import java.util.Arrays;
 
 public class Renderer {
     
@@ -28,6 +28,8 @@ public class Renderer {
     private static final Vertex direction = new Vertex(0, 0, -1);
     private final Vertex OFFSET;
 
+    private float roll = 0, pitch = 0, yaw = 0;
+
     public Renderer(int width, int height) {
 
         WIDTH = width;
@@ -46,23 +48,43 @@ public class Renderer {
 
     }
 
-    public void renderTriangles(float yaw, float pitch, float roll, float scale, Camera camera, ArrayList<Triangle> tris, BufferedImage window) {
+    public void renderTriangles(Camera camera, ArrayList<Triangle> tris, ArrayList<Vertex> lights, BufferedImage window) {
+
+        // Light rotations
+        ArrayList<Vertex> rotatedLights = new ArrayList<>();
+        roll += 0.5;
+        
+        for (Vertex v : lights) {
+
+            rotatedLights.add(Vector.rotateRoll(roll, v));
+
+        }
+
+
+        // Triangle Rotations
+        ArrayList<Triangle> rotated = new ArrayList<>();
+        pitch++; // Uncomment this to rotate object around Y axis
+
+        Triangle rot;
+        for (Triangle t : tris) {
+
+            rot = t;
+            // rot = TriangleTransform.rotateYaw(yaw, rot);
+            // rot = TriangleTransform.rotatePitch(pitch, rot); // Uncomment to introduce rotating objects
+            // rot = TriangleTransform.rotateRoll(roll, rot);
+
+            rotated.add(rot);
+
+        }
 
         ArrayList<Triangle> transformed = new ArrayList<>();
         
-        transformTriangles(tris, transformed, yaw, pitch, roll, scale, camera);
+        transformTriangles(rotated, transformed, camera, rotatedLights);
 
         ArrayList<Triangle> draw = TriangleClip.clipAll(UP, DOWN, LEFT, RIGHT, transformed);
 
-        float[][] depthBuffer = new float[HEIGHT][WIDTH];
-
-        for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
-
-                depthBuffer[y][x] = Float.NEGATIVE_INFINITY;
-
-            }
-        }
+        float[] depthBuffer = new float[HEIGHT * WIDTH];
+        Arrays.fill(depthBuffer, Float.NEGATIVE_INFINITY);
 
         for (Triangle t : draw) {
 
@@ -72,16 +94,18 @@ public class Renderer {
 
     }
 
-    public void transformTriangles(ArrayList<Triangle> input, ArrayList<Triangle> output, float yaw, float pitch, float roll, float scale, Camera camera) {
+    public void transformTriangles(ArrayList<Triangle> input, ArrayList<Triangle> output, Camera camera, ArrayList<Vertex> lights) {
+        
+        Triangle transformed;
 
         for (Triangle t : input) {
 
-            Triangle transformed = t;
-
+            transformed = t;
+            
             transformed = TriangleTransform.translate(camera.getCameraOffset(), transformed);
-            transformed = TriangleTransform.rotateYaw(yaw, transformed);
-            transformed = TriangleTransform.rotatePitch(pitch, transformed);
-            transformed = TriangleTransform.rotateRoll(roll, transformed);
+            transformed = TriangleTransform.rotateYaw(camera.getYaw(), transformed);
+            transformed = TriangleTransform.rotatePitch(camera.getPitch(), transformed);
+            transformed = TriangleTransform.rotateRoll(camera.getRoll(), transformed);
 
             ArrayList<Triangle> zClipped = TriangleClip.clipZ(transformed, Z_BOUND);
 
@@ -95,15 +119,40 @@ public class Renderer {
 
                 if (Vector.scalarProduct(normal, direction) > 0) {
                     
-                    transformed = TriangleTransform.scale(scale, transformed);
+                    transformed = TriangleTransform.scale(camera.getScale(), transformed);
                     transformed = TriangleTransform.translate(OFFSET, transformed);
-    
+                    
+                    float x = (t.getV1().getX() + t.getV2().getX() + t.getV3().getX()) / 3;
+                    float y = (t.getV1().getY() + t.getV2().getY() + t.getV3().getY()) / 3;
+                    float z = (t.getV1().getZ() + t.getV2().getZ() + t.getV3().getZ()) / 3;
+
+                    Vertex l1 = Vector.sub(t.getV2(), t.getV1());
+                    Vertex l2 = Vector.sub(t.getV3(), t.getV1());
+                    Vertex n = Vector.normalise(Vector.crossProduct(l1, l2));
+
+                    float light = 0;
+                    for (Vertex v : lights) {
+
+                        Vertex l = v;
+                        
+                        l = Vector.sub(l, new Vertex(x,y,z));
+                        l = Vector.normalise(l);
+                        
+                        light += Vector.scalarProduct(l, n);
+
+                    }
+
+                    // light = (float)Math.pow(light, 1/2.4);
+                    light = Math.min(1, light);
+                    light = Math.max(0.17F, light);
+
                     output.add(
                         new Triangle(
                             transformed.getV1(),
                             transformed.getV2(),
                             transformed.getV3(),
-                            transformed.getTexture()
+                            transformed.getTexture(),
+                            light
                         )
     
                     );
@@ -116,7 +165,7 @@ public class Renderer {
         
     }
 
-    private void rasterizeTriangle(BufferedImage image, Triangle t, float[][] depthBuffer) {
+    private void rasterizeTriangle(BufferedImage image, Triangle t, float[] depthBuffer) {
 
         Vertex[] vertices = t.getVertices();
 
@@ -210,10 +259,19 @@ public class Renderer {
                         w += wstep;
                         z += zstep;
 
-                        if (z > depthBuffer[y][x]) {
+                        if (z > depthBuffer[y * WIDTH + x]) {
                             
-                            image.setRGB(x, y, t.getTexture().getTexturePixel(u / w, v / w));
-                            depthBuffer[y][x] = (float)z;
+                            int color = t.getTexture().getTexturePixel(u / w, v / w);
+                            float light = t.getLight();
+
+                            int red = (int)(((color >> 16) & 0xFF) * light);
+                            int green = (int)(((color >> 8) & 0xFF) * light);
+                            int blue = (int)((color & 0xFF) * light);
+
+                            int rgb = (red << 16) | (green << 8) | blue;
+
+                            image.setRGB(x, y, rgb);
+                            depthBuffer[y * WIDTH + x] = (float)z;
 
                         }
 
@@ -288,10 +346,19 @@ public class Renderer {
                         w += wstep;
                         z += zstep;
 
-                        if (z > depthBuffer[y][x]) {
+                        if (z > depthBuffer[y * WIDTH + x]) {
 
-                            image.setRGB(x, y, t.getTexture().getTexturePixel(u / w, v / w));
-                            depthBuffer[y][x] = (float)z;
+                            int color = t.getTexture().getTexturePixel(u / w, v / w);
+                            float light = t.getLight();
+
+                            int red = (int)(((color >> 16) & 0xFF) * light);
+                            int green = (int)(((color >> 8) & 0xFF) * light);
+                            int blue = (int)((color & 0xFF) * light);
+
+                            int rgb = (red << 16) | (green << 8) | blue;
+
+                            image.setRGB(x, y, rgb);
+                            depthBuffer[y * WIDTH + x] = (float)z;
 
                         }
 

@@ -7,7 +7,7 @@ public class Texture {
     private int textureWidth;
     private int textureHeight;
 
-    private int[][] colorArray;
+    private int[] colorArray;
 
     public Texture() { this(""); }
 
@@ -27,12 +27,12 @@ public class Texture {
 
     private void generateArray(BufferedImage texture) {
 
-        colorArray = new int[textureHeight][textureWidth];
+        colorArray = new int[textureHeight * textureWidth];
 
         for (int y = 0; y < textureHeight; y++) {
             for (int x = 0; x < textureWidth; x++) {
 
-                colorArray[y][x] = texture.getRGB(x,y);
+                colorArray[y * textureWidth + x] = texture.getRGB(x,y);
 
             }
 
@@ -45,13 +45,16 @@ public class Texture {
 
     public int getTexturePixel(double x, double y) {
 
-        if (x >= textureWidth) { x = textureWidth - 1; }
-        if (y >= textureHeight) { y = textureHeight - 1; }
+        int intX = (int)x;
+        int intY = (int)y;
 
-        if (x < 0) { x = 0; }
-        if (y < 0) { y = 0; }
+        if (intX >= textureWidth) { intX = textureWidth - 1; }
+        if (intY >= textureHeight) { intY = textureHeight - 1; }
 
-        return colorArray[(int)y][(int)x];
+        if (intX < 0) { intX = 0; }
+        if (intY < 0) { intY = 0; }
+
+        return colorArray[intY * textureWidth + intX];
 
     }
 

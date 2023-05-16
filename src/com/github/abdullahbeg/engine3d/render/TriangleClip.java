@@ -22,47 +22,47 @@ public class TriangleClip {
 
         }
 
-        if (outside == 0) { 
-            output.add(t); 
+        switch (outside) {
 
-        } else if (outside == 1) { 
+            case 0: 
+                output.add(t); return output;
 
-            for (int i = 0; i < 3; i++) { 
+            case 1:
+                for (int i = 0; i < 3; i++) { 
 
-                // Find the point which is outside
-                if (vertices[i].getZ() <= zBound) {
+                    // Find the point which is outside
+                    if (vertices[i].getZ() <= zBound) {
 
-                    int i2 = (i + 1) % 3;
-                    int i3 = (i + 2) % 3;
-                    Vertex[] intersects = zIntersect(vertices[i], vertices[i2], vertices[i3], zBound);
+                        int i2 = (i + 1) % 3;
+                        int i3 = (i + 2) % 3;
+                        Vertex[] intersects = zIntersect(vertices[i], vertices[i2], vertices[i3], zBound);
 
-                    output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture()));
-                    output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture()));
-                    
-                    return output;
+                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture(), t.getLight()));
+                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture(), t.getLight()));
+                        
+                        return output;
 
-                }
-
-            }
-
-        } else if (outside == 2) {
-
-            for (int i = 0; i < 3; i++) {
-
-                // Find the point which is inside
-                if (vertices[i].getZ() > zBound) {
-
-                    int i2 = (i + 1) % 3;
-                    int i3 = (i + 2) % 3;
-                    Vertex[] intersects = zIntersect(vertices[i], vertices[i2], vertices[i3], zBound);
-
-                    output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture()));
-
-                    return output;
+                    }
 
                 }
 
-            }
+            case 2:
+                for (int i = 0; i < 3; i++) {
+
+                    // Find the point which is inside
+                    if (vertices[i].getZ() > zBound) {
+
+                        int i2 = (i + 1) % 3;
+                        int i3 = (i + 2) % 3;
+                        Vertex[] intersects = zIntersect(vertices[i], vertices[i2], vertices[i3], zBound);
+
+                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture(), t.getLight()));
+
+                        return output;
+
+                    }
+
+                }
 
         }
 
@@ -74,23 +74,21 @@ public class TriangleClip {
 
     public static ArrayList<Triangle> clipAll(int UP, int DOWN, int LEFT, int RIGHT, ArrayList<Triangle> tris) {
 
-        ArrayList<Triangle> output = new ArrayList<>();
+        ArrayList<Triangle> output = new ArrayList<>(tris);
 
-        for (Triangle t : tris) {
-            output = clipTop(UP, tris);
-        }
+        ArrayList<Triangle> temp;
 
-        for (Triangle t : output) {
-            output = clipBottom(DOWN, output);
-        }
+        temp = clipTop(UP, output);
+        output = new ArrayList<>(temp);
 
-        for (Triangle t : output) {
-            output = clipLeft(LEFT, output);
-        }
+        temp = clipBottom(DOWN, output);
+        output = new ArrayList<>(temp);
 
-        for (Triangle t : output) {
-            output = clipRight(RIGHT, output);
-        }
+        temp = clipLeft(LEFT, output);
+        output = new ArrayList<>(temp);
+
+        temp = clipRight(RIGHT, output);
+        output = new ArrayList<>(temp);
 
         return output;
 
@@ -111,45 +109,47 @@ public class TriangleClip {
     
             }
     
-            if (outside == 0) {
-                output.add(t);
-    
-            } else if (outside == 1) {
-    
-                for (int i = 0; i < 3; i++) {
-    
-                    if (vertices[i].getY() < yBound) {
-    
-                        int i2 = (i + 1) % 3;
-                        int i3 = (i + 2) % 3;
-                        Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
-                    
-                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture()));
-                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture()));
+            switch (outside) {
 
-                        break;
-    
-                    }
-    
-                }
-    
-            } else if (outside == 2) {
+                case 0:
+                    output.add(t); break;
 
-                for (int i = 0; i < 3; i++) {
-
-                    if (vertices[i].getY() >= yBound) {
-
-                        int i2 = (i + 1) % 3;
-                        int i3 = (i + 2) % 3;
-                        Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
-
-                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture()));
+                case 1:
+                    for (int i = 0; i < 3; i++) {
+        
+                        if (vertices[i].getY() < yBound) {
+        
+                            int i2 = (i + 1) % 3;
+                            int i3 = (i + 2) % 3;
+                            Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
                         
-                        break;
-
+                            output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture(), t.getLight()));
+                            output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture(), t.getLight()));
+        
+                            break;
+                            
+                        }
+                        
                     }
+                    break;
 
-                }
+                case 2:
+                    for (int i = 0; i < 3; i++) {
+        
+                        if (vertices[i].getY() >= yBound) {
+        
+                            int i2 = (i + 1) % 3;
+                            int i3 = (i + 2) % 3;
+                            Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
+        
+                            output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture(), t.getLight()));
+                            
+                            break;
+                            
+                        }
+                        
+                    }
+                    break;
 
             }
 
@@ -174,45 +174,47 @@ public class TriangleClip {
     
             }
     
-            if (outside == 0) {
-                output.add(t);
-    
-            } else if (outside == 1) {
-    
-                for (int i = 0; i < 3; i++) {
-    
-                    if (vertices[i].getY() > yBound) {
-    
-                        int i2 = (i + 1) % 3;
-                        int i3 = (i + 2) % 3;
-                        Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
-                    
-                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture()));
-                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture()));
+            switch (outside) {
 
-                        break;
-    
-                    }
-    
-                }
-    
-            } else if (outside == 2) {
+                case 0:
+                    output.add(t); break;
 
-                for (int i = 0; i < 3; i++) {
-
-                    if (vertices[i].getY() <= yBound) {
-
-                        int i2 = (i + 1) % 3;
-                        int i3 = (i + 2) % 3;
-                        Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
-
-                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture()));
+                case 1:
+                    for (int i = 0; i < 3; i++) {
+        
+                        if (vertices[i].getY() > yBound) {
+        
+                            int i2 = (i + 1) % 3;
+                            int i3 = (i + 2) % 3;
+                            Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
                         
-                        break;
-
+                            output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture(), t.getLight()));
+                            output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture(), t.getLight()));
+        
+                            break;
+        
+                        }
+        
                     }
+                    break;
 
-                }
+                case 2:
+                    for (int i = 0; i < 3; i++) {
+        
+                        if (vertices[i].getY() <= yBound) {
+        
+                            int i2 = (i + 1) % 3;
+                            int i3 = (i + 2) % 3;
+                            Vertex[] intersects = yIntersect(vertices[i], vertices[i2], vertices[i3], yBound);
+        
+                            output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture(), t.getLight()));
+                            
+                            break;
+        
+                        }
+        
+                    }
+                    break;
 
             }
 
@@ -237,45 +239,48 @@ public class TriangleClip {
 
             }
 
-            if (outside == 0) {
-                output.add(t);
 
-            } else if (outside == 1) {
+            switch (outside) {
 
-                for (int i = 0; i < 3; i++) {
+                case 0:
+                    output.add(t); break;
 
-                    if (vertices[i].getX() < xBound) {
+                case 1:
+                    for (int i = 0; i < 3; i++) {
 
-                        int i2 = (i + 1) % 3;
-                        int i3 = (i + 2) % 3;
-                        Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
+                        if (vertices[i].getX() < xBound) {
+
+                            int i2 = (i + 1) % 3;
+                            int i3 = (i + 2) % 3;
+                            Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
+                        
+                            output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture(), t.getLight()));
+                            output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture(), t.getLight()));
+                            
+                            break;
+
+                        }
+
+                    }
+                    break;
+
+                case 2:
+                    for (int i = 0; i < 3; i++) {
+        
+                        if (vertices[i].getX() >= xBound) {
+        
+                            int i2 = (i + 1) % 3;
+                            int i3 = (i + 2) % 3;
+                            Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
+        
+                            output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture(), t.getLight()));
+                            
+                            break;
+        
+                        }
                     
-                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture()));
-                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture()));
-                        
-                        break;
-
                     }
-
-                }
-
-            } else if (outside == 2) {
-
-                for (int i = 0; i < 3; i++) {
-
-                    if (vertices[i].getX() >= xBound) {
-
-                        int i2 = (i + 1) % 3;
-                        int i3 = (i + 2) % 3;
-                        Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
-
-                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture()));
-                        
-                        break;
-
-                    }
-                
-                }
+                    break;
 
             }
 
@@ -300,46 +305,48 @@ public class TriangleClip {
 
             }
 
-            if (outside == 0) {
-                output.add(t);
+            switch (outside) {
 
-            } else if (outside == 1) {
+                case 0:
+                    output.add(t); break;
 
-                for (int i = 0; i < 3; i++) {
+                case 1:
+                    for (int i = 0; i < 3; i++) {
+        
+                        if (vertices[i].getX() > xBound) {
+        
+                            int i2 = (i + 1) % 3;
+                            int i3 = (i + 2) % 3;
+                            Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
+                        
+                            output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture(), t.getLight()));
+                            output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture(), t.getLight()));
+                            
+                            break;
+        
+                        }
+        
+                    }
+                    break;
 
-                    if (vertices[i].getX() > xBound) {
-
-                        int i2 = (i + 1) % 3;
-                        int i3 = (i + 2) % 3;
-                        Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
+                case 2:
+                    for (int i = 0; i < 3; i++) {
+        
+                        if (vertices[i].getX() <= xBound) {
+        
+                            int i2 = (i + 1) % 3;
+                            int i3 = (i + 2) % 3;
+                            Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
+        
+                            output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture(), t.getLight()));
+                            
+                            break;
+        
+                        }
                     
-                        output.add(new Triangle(intersects[1], intersects[0], vertices[i2], t.getTexture()));
-                        output.add(new Triangle(intersects[1], vertices[i2], vertices[i3], t.getTexture()));
-                        
-                        break;
-
                     }
-
-                }
-
-            } else if (outside == 2) {
-
-                for (int i = 0; i < 3; i++) {
-
-                    if (vertices[i].getX() <= xBound) {
-
-                        int i2 = (i + 1) % 3;
-                        int i3 = (i + 2) % 3;
-                        Vertex[] intersects = xIntersect(vertices[i], vertices[i2], vertices[i3], xBound);
-
-                        output.add(new Triangle(vertices[i], intersects[0], intersects[1], t.getTexture()));
-                        
-                        break;
-
-                    }
-                
-                }
-
+                    break;
+                    
             }
 
         }

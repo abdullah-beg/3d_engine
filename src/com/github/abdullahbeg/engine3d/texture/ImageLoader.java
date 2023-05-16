@@ -22,8 +22,8 @@ public class ImageLoader {
             System.out.println("File not found! Using default texture.");
 
             try {
-                // image = ImageIO.read(ImageLoader.class.getClassLoader().getResourceAsStream("\\com\\github\\abdullahbeg\\engine3d\\texture\\default.png"));
-                image = ImageIO.read(ImageLoader.class.getClassLoader().getResourceAsStream("\\com\\github\\abdullahbeg\\engine3d\\texture\\logo.png"));
+                image = ImageIO.read(ImageLoader.class.getClassLoader().getResourceAsStream("\\com\\github\\abdullahbeg\\engine3d\\texture\\default.png"));
+                // image = ImageIO.read(ImageLoader.class.getClassLoader().getResourceAsStream("\\com\\github\\abdullahbeg\\engine3d\\texture\\logo.png"));
                 return image;
 
             } catch (IOException x) {

@@ -10,10 +10,12 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 
 import com.github.abdullahbeg.engine3d.mesh.Triangle;
+import com.github.abdullahbeg.engine3d.mesh.Vertex;
 import com.github.abdullahbeg.engine3d.userinput.InputHandler;
 import com.github.abdullahbeg.engine3d.math.Camera;
 import com.github.abdullahbeg.engine3d.misc.Location;
-import com.github.abdullahbeg.engine3d.object.Square;
+import com.github.abdullahbeg.engine3d.object.Land;
+import com.github.abdullahbeg.engine3d.object.Model;
 
 public class Engine extends JPanel implements Runnable {
     
@@ -26,26 +28,11 @@ public class Engine extends JPanel implements Runnable {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
-    private static final int FPS = 60;
+    private static final int FPS = 30;
     private static final double GAME_TICK_INTERVAL = (double)1000000000 / FPS;
 
-    private static final Color BACKGROUND_COLOR = new Color(153,228,255);
-    
-
-    private float yaw = 0;
-    private float pitch = 0;
-    private float roll = 0;
-    
-    private float scale = 250;
-    
-
-    private static final float SCROLL_SPEED = 5;
-
-    private static final float LOOK_SENSITIVITY_X = 4;
-    private static final float LOOK_SENSITIVITY_Y = 4;
-
-    private static final float VELOCITY = 0.077F;
-
+    // private static final Color BACKGROUND_COLOR = new Color(153,228,255); // DAY
+    private static final Color BACKGROUND_COLOR = new Color(5, 6, 54); // NIGHT
 
     private Thread engineThread;
     private final Main main;
@@ -55,6 +42,7 @@ public class Engine extends JPanel implements Runnable {
     private BufferedImage window;
 
     private ArrayList<Triangle> triangles;
+    private ArrayList<Vertex> lights;
     
     public Engine(Main main) {
 
@@ -63,20 +51,25 @@ public class Engine extends JPanel implements Runnable {
         setDoubleBuffered(true);
         setFocusable(true);
                 
-        engineThread = new Thread(this);
         this.main = main;
+        engineThread = new Thread(this);
         renderer = new Renderer(WIDTH, HEIGHT);   
         camera = new Camera();
         
-        inputHandler = new InputHandler();
+        inputHandler = new InputHandler(camera);
         addKeyListener(inputHandler.getKeyInput());
         addMouseListener(inputHandler.getMouseInput());
         addMouseWheelListener(inputHandler.getMouseWheelInput());
 
-        triangles = new ArrayList<>();
-        Square c = new Square(triangles); 
-    
         engineThread.start();
+
+        triangles = new ArrayList<>();
+        lights = new ArrayList<>();
+
+        Land l = new Land(triangles, 40, 2);
+        // Model teapot = new Model("","",triangles);
+
+        lights.add(new Vertex(0,47,0));
 
     }
 
@@ -118,9 +111,9 @@ public class Engine extends JPanel implements Runnable {
 
     public void update() {
 
-        inputHandler.updateKeyInput(pitch, roll, VELOCITY, camera);
-        inputHandler.updateMouseInput(mouseLocation, this, LOOK_SENSITIVITY_X, LOOK_SENSITIVITY_Y);
-        inputHandler.updateMouseWheelInput(this, SCROLL_SPEED);
+        inputHandler.updateKeyInput();
+        inputHandler.updateMouseInput(mouseLocation);
+        inputHandler.updateMouseWheelInput();
 
     }
 
@@ -131,26 +124,9 @@ public class Engine extends JPanel implements Runnable {
 
         Graphics2D g2 = (Graphics2D) g;
 
-        renderer.renderTriangles(yaw, pitch, roll, scale, camera, triangles, window);
+        renderer.renderTriangles(camera, triangles, lights, window);
         g2.drawImage(window, null, 0, 0);
         
-    }
-
-    public float getScale() { return scale; }
-    public float getYaw() { return yaw; }
-    public float getPitch() { return pitch; }
-    public float getRoll() { return roll; }
-
-    public void setScale(float scale) { this.scale = scale; }
-    public void setYaw(float yaw) { this.yaw = yaw; }
-    public void setPitch(float pitch) { this.pitch = pitch; }
-
-    public void setRoll(float roll) { 
-        
-        if (roll < -45) { this.roll = -45; return; }
-        else if (roll > 45) { this.roll = 45; return; }
-        else { this.roll = roll; return; }
-
     }
 
 }
